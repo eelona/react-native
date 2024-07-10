@@ -1,79 +1,121 @@
-import { TextInput, View, StyleSheet, Alert } from "react-native";
-import PrimaryButton from "../components/PrimaryButton";
-import { useState } from "react";
-function StartGameScreen() {
-  const [enteredNumber, setEnteredNumber] = useState("");
+import { useState } from 'react';
+import {
+    TextInput, 
+    View, 
+    StyleSheet, 
+    Alert, 
+    useWindowDimensions,
+    KeyboardAvoidingView,
+    ScrollView
+} from 'react-native';
 
-  function numberInputHandler(enteredText) {
-    setEnteredNumber(enteredText);
-  }
+import Colors from '../constants/color';
+import Title from '../components/ui/Title';
+import PrimaryButton from '../components/ui/PrimaryButton';
+import Card from '../components/ui/Card';
+import InstructionText from '../components/ui/InstructionText';
 
-  function resetInputHandler() {
-    setEnteredNumber('')
-  }
-  function confirmInputHandler() {
-    const chosenNumber = parseInt(enteredNumber);
+function StartGameScreen({onPickNumber}){
+    const[enteredNumber, setEnteredNumber] = useState('');
 
-    if (isNaN(chosenNumber) || chosenNumber <= 0 || chosenNumber > 99) {
-      Alert.alert(
-        "Invalid number",
-        "Number has to be a number between 1 and 99",
-        [{ text: "Okay", style: "destructive", onPress: resetInputHandler }]
-      );
-      return;
+    const {width, height} = useWindowDimensions();
+
+    function numberInputHandler(enteredText){
+        setEnteredNumber(enteredText);
     }
-    console.log('Valid number!');
-  }
-  return (
-    <View style={styles.inputContainer}>
-      <TextInput
-        style={styles.numberInput}
-        maxLength={2}
-        keyboardType="number-pad"
-        autoCorrect={false}
-        onChangeText={numberInputHandler}
-        value={enteredNumber}
-      />
-      <View style={styles.buttonsContainer}>
-        <View style={styles.buttonContainer}>
-          <PrimaryButton onPress={resetInputHandler}>Reset</PrimaryButton>
-        </View>
-        <View style={styles.buttonContainer}>
-          <PrimaryButton onPress={confirmInputHandler}>Confirm</PrimaryButton>
-        </View>
-      </View>
-    </View>
-  );
+
+    function resetInputHandler(){
+        setEnteredNumber('');
+    }
+
+    function confirmInputHandler(){
+        const chosenNumber = parseInt(enteredNumber);
+
+        if(isNaN(chosenNumber) || chosenNumber <= 0 || chosenNumber >99){
+            Alert.alert('Invalid number', 'Number has to be a number between 1 and 99',
+            [{text: 'Okay', style: 'destructive', onPress:resetInputHandler}]
+            );
+            return;
+        }
+        onPickNumber(chosenNumber);
+    }
+
+    const marginTopDistance = height  < 380 ? 30 : 100;
+
+    return (
+        <ScrollView style={styles.screen}>
+            <KeyboardAvoidingView style={styles.screen} behavior="position">
+                <View style={[styles.rootContainer, {marginTop: marginTopDistance}]}>
+                    <Title>Guess My Number</Title>
+                    <Card>
+                        <InstructionText>
+                            Enter a Number
+                        </InstructionText>
+                        <TextInput 
+                            style={styles.numberInput}
+                            maxLength={2}
+                            keyboardType="number-pad"
+                            autoCapitalize='none'
+                            autoCorrect={false}
+                            onChangeText={numberInputHandler}
+                            value={enteredNumber}
+                        />
+                        <View style={styles.buttonsContainer}>
+                            <View style={styles.buttonContainer}>
+                                <PrimaryButton onPress={resetInputHandler}>Reset</PrimaryButton>
+                            </View>
+                            <View style={styles.buttonContainer}>
+                                <PrimaryButton onPress={confirmInputHandler}>Confirm</PrimaryButton>
+                            </View>
+                        </View>
+                    </Card>
+                </View>
+            </KeyboardAvoidingView>
+        </ScrollView>
+    );
 }
 
 export default StartGameScreen;
 
+//const deviceHeight = Dimensions.get('window').height;
+
 const styles = StyleSheet.create({
-  inputContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 100,
-    marginHorizontal: 24,
-    padding: 16,
-    backgroundColor: "pink",
-    borderRadius: 8,
-    elevation: 4,
-  },
-  numberInput: {
-    height: 50,
-    width: 50,
-    fontSize: 32,
-    borderBottomColor: "brown",
-    borderBottomWidth: 2,
-    color: "brown",
-    marginVertical: 8,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  buttonsContainer: {
-    flexDirection: "row",
-  },
-  buttonContainer: {
-    flex: 1,
-  },
+    screen:{
+        flex:1,
+    },
+    rootContainer:{
+        flex:1,
+        //marginTop:deviceHeight < 380 ? 30 : 100,
+        alignItems:'center'
+    },
+    inputContainer:{
+        padding:16,
+        justifyContent:'center',
+        alignItems:'center',
+        marginTop:36,
+        backgroundColor: Colors.primary800,
+        marginHorizontal: 24,
+        borderRadius:8,
+        shadowColor:'black',
+        shadowOffset:{width:2, height:2},
+        shadowRadius: 6,
+        shadowOpacity: 0.25,
+    },
+    numberInput:{
+        height:50,
+        width:50,
+        fontSize:32,
+        borderBottomColor:Colors.accent500,
+        borderBottomWidth:2,
+        color:Colors.accent500,
+        marginVertical: 8,
+        fontWeight:'bold',
+        textAlign:'center',
+    },
+    buttonsContainer:{
+        flexDirection:'row',
+    },
+    buttonContainer:{
+        flex:1,
+    }
 });
