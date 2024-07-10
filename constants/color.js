@@ -1,9 +1,9 @@
 const Colors = {
-    primary500: '#70043b',
+    primary500: 'lightpink',
     primary600: '#640233',
-    primary700:'#4e0329',
+    primary700:'pink',
     primary800:'#3b021f',
-    accent500: '#ddb52f'
+    accent500: 'brown'
 };
 
 export default Colors;
